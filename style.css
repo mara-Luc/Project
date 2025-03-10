@@ -61,7 +61,7 @@ body{
 }
 
 .nav-button .btn{
-    width 130px;
+    width: 130px;
     height: 40px;
     font-weight: 500;
     background: rgba(255, 255, 255, 0.4);
