@@ -1,11 +1,18 @@
 <?php
-// Database connection details
-$db_host = getenv('DB_HOST');       // Use environment variables for security
-$db_username = getenv('DB_USERNAME');
-$db_password = getenv('DB_PASSWORD');
-$db_name = getenv('DB_NAME');
+// Include Composer's autoloader to use `phpdotenv`
+require_once /var/www/html/Project . '/vendor/autoload.php';
 
-// Connect to the database
+// Load the `.env` file
+$dotenv = Dotenv\Dotenv::createImmutable(/var/www/html/Project);
+$dotenv->load();
+
+// Access environment variables securely
+$db_host = $_ENV['DB_HOST'];
+$db_username = $_ENV['DB_USERNAME'];
+$db_password = $_ENV['DB_PASSWORD'];
+$db_name = $_ENV['DB_NAME'];
+
+// Create a database connection
 $conn = new mysqli($db_host, $db_username, $db_password, $db_name);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
