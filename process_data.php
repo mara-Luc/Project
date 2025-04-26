@@ -1,6 +1,6 @@
 <?php
 // Include Composer's autoloader to use `phpdotenv`
-require_once /var/www/html/Project . '/vendor/autoload.php';
+require_once '/var/www/html/Project/vendor/autoload.php';
 
 // Load the `.env` file
 $dotenv = Dotenv\Dotenv::createImmutable(/var/www/html/Project);
