@@ -3,7 +3,7 @@
 require_once '/var/www/html/Project/vendor/autoload.php';
 
 // Load the `.env` file
-$dotenv = Dotenv\Dotenv::createImmutable(/var/www/html/Project);
+$dotenv = Dotenv\Dotenv::createImmutable('/var/www/html/Project');
 $dotenv->load();
 
 // Access environment variables securely
