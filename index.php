@@ -46,51 +46,7 @@
                     </div>
                 </div>
             </form>
-            <!------------------- registration form -------------------------->
-            <form action="register.php" method="POST">
-                <div class="register-container" id="register">
-                    <div class="top">
-                        <span>Have an account? <a href="login.php" onclick="login()">Login</a></span>
-                        <header>Sign Up</header>
-                    </div>
-                    <div class="two-forms">
-                        <div class="input-box">
-                            <label for="firstname">First Name:</label>
-                            <input type="text" id="firstname" name="firstname" class="input-field" placeholder="Firstname" required>
-                            <i class="bx bx-user"></i>
-                        </div>
-                        <div class="input-box">
-                            <label for="lastname">Last Name:</label>
-                            <input type="text" id="lastname" name="lastname" class="input-field" placeholder="Lastname" required>
-                            <i class="bx bx-user"></i>
-                        </div>
-                    </div>
-                    <div class="input-box">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" class="input-field" placeholder="Email" required>
-                        <i class="bx bx-envelope"></i>
-                    </div>
-                    <div class="input-box">
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" name="password" class="input-field" placeholder="Password" required>
-                        <i class="bx bx-lock-alt"></i>
-                    </div>
-                    <div class="input-box">
-                        <input type="submit" class="submit" value="Register">
-                    </div>
-                    <div class="two-col">
-                        <div class="one">
-                            <input type="checkbox" id="register-check">
-                            <label for="register-check"> Remember Me</label>
-                        </div>
-                        <div class="two">
-                            <label><a href="#">Terms & conditions</a></label>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>   
+ 
     <script>
        function myMenuFunction() {
            var i = document.getElementById("navMenu");
