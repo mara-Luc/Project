@@ -1,15 +1,6 @@
 <?php
-// Database connection details (hardcoded)
-$db_host = "localhost";         // Replace with your database host
-$db_username = "php";           // Replace with your database username
-$db_password = "Voidnull0";     // Replace with your database password
-$db_name = "ringDB";            // Replace with your database name
-
-// Create a database connection
-$conn = new mysqli($db_host, $db_username, $db_password, $db_name);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// Include the database connection file
+include 'db_connect.php'; // Establishes connection using predefined credentials
 
 // Process form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -25,7 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Handle file upload (picture)
     if (isset($_FILES["picture"]) && $_FILES["picture"]["error"] == 0) {
-        $picture = addslashes(file_get_contents($_FILES["picture"]["tmp_name"])); // Convert file to binary
+        // Read the image file contents as binary data
+        $picture = file_get_contents($_FILES["picture"]["tmp_name"]);
     } else {
         $picture = null;
     }
@@ -34,9 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $sql = "INSERT INTO users (picture, username, password, firstname, lastname, department, pin, RFID_UID, login_time) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
+
+    // Bind parameters to prevent SQL injection
     $stmt->bind_param("sssssssss", $picture, $username, $password, $firstname, $lastname, $department, $pin, $RFID_UID, $login_time);
 
-    // Execute the query
+    // Execute the query and check for success
     if ($stmt->execute()) {
         echo "<p>Data successfully inserted!</p>";
     } else {
