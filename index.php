@@ -26,7 +26,7 @@
         <!----------------------------- Form box ----------------------------------->    
         <div class="form-box">
             <!------------------- login form -------------------------->
-            
+            <form action="login.php" method="POST"><!---->
                 <div class="login-container" id="login">
                     <div class="top">
                         <header>Login</header>
@@ -40,7 +40,6 @@
                         <i class="bx bx-lock-alt"></i>
                     </div>
                     <div class="input-box">
-                        <form action="login.php" method="POST"><!---->
                         <input type="submit" class="submit" value="Sign In">
                     </div>
                 </div>
