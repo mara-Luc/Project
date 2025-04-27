@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
-    <title>Portals | Login & Registration</title>
+    <title>Portals | Login</title>
 </head>
 <body>
     <div class="wrapper">
@@ -26,12 +26,13 @@
         <!----------------------------- Form box ----------------------------------->    
         <div class="form-box">
             <!------------------- login form -------------------------->
-            <form action="login.php" method="POST">
+            
                 <div class="login-container" id="login">
                     <div class="top">
                         <header>Login</header>
                     </div>
                     <div class="input-box">
+                        <form action="login.php" method="POST">
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" class="input-field" placeholder="Username or Email" required>
                         <i class="bx bx-user"></i>
