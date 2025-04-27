@@ -32,7 +32,7 @@
                         <header>Login</header>
                     </div>
                     <div class="input-box">
-                        <!--<form action="login.php" method="POST">-->
+                        
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" class="input-field" placeholder="Username or Email" required>
                         <i class="bx bx-user"></i>
@@ -43,6 +43,7 @@
                         <i class="bx bx-lock-alt"></i>
                     </div>
                     <div class="input-box">
+                        <form action="login.php" method="POST"><!---->
                         <input type="submit" class="submit" value="Sign In">
                     </div>
                 </div>
