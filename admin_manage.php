@@ -17,10 +17,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_user'])) {
     $department = htmlspecialchars($_POST["department"]);
     $role = isset($_POST["role"]) && $_POST["role"] === "Admin" ? "Admin" : "User"; // Default to "User"
 
+    // Handle file upload (picture)
+    if (isset($_FILES["picture"]) && $_FILES["picture"]["error"] == 0) {
+        $picture = file_get_contents($_FILES["picture"]["tmp_name"]); // Convert file to binary
+    } else {
+        $picture = null; // No picture uploaded
+    }
+
     // Prepare and execute SQL query to add a user
-    $sql = "INSERT INTO users (username, password, firstname, lastname, department, role) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (picture, username, password, firstname, lastname, department, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssss", $username, $password, $firstname, $lastname, $department, $role);
+    $stmt->bind_param("sssssss", $picture, $username, $password, $firstname, $lastname, $department, $role);
 
     if ($stmt->execute()) {
         echo "<div style='color: green;'>User added successfully.</div>";
@@ -48,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_user'])) {
 }
 
 // Retrieve all users to display
-$sql = "SELECT id, firstname, lastname, username, department, role FROM users";
+$sql = "SELECT id, firstname, lastname, username, department, role, picture FROM users";
 $result = $conn->query($sql);
 ?>
 
@@ -85,11 +92,11 @@ $result = $conn->query($sql);
         th {
             background-color: #f2f2f2;
         }
-        .success {
-            color: green;
-        }
-        .error {
-            color: red;
+        img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -97,7 +104,7 @@ $result = $conn->query($sql);
     <h1>Admin Management Page</h1>
 
     <h2>Add User</h2>
-    <form method="POST" action="">
+    <form method="POST" action="" enctype="multipart/form-data">
         <label>First Name:</label>
         <input type="text" name="firstname" required><br><br>
         <label>Last Name:</label>
@@ -113,6 +120,8 @@ $result = $conn->query($sql);
             <option value="User">User</option>
             <option value="Admin">Admin</option>
         </select><br><br>
+        <label>Profile Picture:</label>
+        <input type="file" name="picture" accept="image/*"><br><br>
         <button type="submit" name="add_user">Add User</button>
     </form>
 
@@ -121,6 +130,7 @@ $result = $conn->query($sql);
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Picture</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Username</th>
@@ -133,6 +143,13 @@ $result = $conn->query($sql);
             <?php while ($row = $result->fetch_assoc()): ?>
             <tr>
                 <td><?= htmlspecialchars($row['id']) ?></td>
+                <td>
+                    <?php if ($row['picture']): ?>
+                        <img src="data:image/jpeg;base64,<?= base64_encode($row['picture']) ?>" alt="Profile Picture">
+                    <?php else: ?>
+                        <img src="https://via.placeholder.com/50" alt="No Image">
+                    <?php endif; ?>
+                </td>
                 <td><?= htmlspecialchars($row['firstname']) ?></td>
                 <td><?= htmlspecialchars($row['lastname']) ?></td>
                 <td><?= htmlspecialchars($row['username']) ?></td>
