@@ -33,12 +33,12 @@
                     </div>
                     <div class="input-box">
                         
-                        <label for="username">Username:</label>
+                        <!--<label for="username">Username:</label>-->
                         <input type="text" id="username" name="username" class="input-field" placeholder="Username or Email" required>
                         <i class="bx bx-user"></i>
                     </div>
                     <div class="input-box">
-                        <label for="password">Password:</label>
+                        <!--<label for="password">Password:</label>-->
                         <input type="password" id="password" name="password" class="input-field" placeholder="Password" required>
                         <i class="bx bx-lock-alt"></i>
                     </div>
