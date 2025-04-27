@@ -1,14 +1,14 @@
 <?php
 // Database connection details
 $db_host = "localhost";
-$db_username = "root";
-$db_password = "password";
+$db_username = "php";
+$db_password = "Voidnull0";
 $db_name = "ringDB";
 
 // Set the serial port path and baud rate
-//$serial_port = "/dev/ttyAMA10";  // for GPIO pins
-$serial_port = "/dev/ttyUSB0";  // for port or GPIO pins
-$baud_rate = "2400";            //match my ATMEAGA baudrate
+//$serial_port = "/dev/ttyAMA10";   // for GPIO pins
+$serial_port = "/dev/ttyUSB0";      // for port
+$baud_rate = "2400";                //match my ATMEAGA baudrate
 
 // Configure the serial port
 exec("stty -F $serial_port $baud_rate cs8 -cstopb -parenb");

@@ -1,9 +1,9 @@
 <?php
 // Database connection details (hardcoded)
-$db_host = "localhost";       // Replace with your database host
-$db_username = "php";        // Replace with your database username
-$db_password = "Voidnull0";    // Replace with your database password
-$db_name = "ringDB";          // Replace with your database name
+$db_host = "localhost";         // Replace with your database host
+$db_username = "php";           // Replace with your database username
+$db_password = "Voidnull0";     // Replace with your database password
+$db_name = "ringDB";            // Replace with your database name
 
 // Create a database connection
 $conn = new mysqli($db_host, $db_username, $db_password, $db_name);
