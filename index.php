@@ -24,9 +24,10 @@
             </div>
         </nav>
         <!----------------------------- Form box ----------------------------------->    
-        <div class="form-box">
+        <form action="login.php" method="POST"><!---->
+            <div class="form-box">
             <!------------------- login form -------------------------->
-            <form action="login.php" method="POST"><!---->
+            
                 <div class="login-container" id="login">
                     <div class="top">
                         <header>Login</header>
