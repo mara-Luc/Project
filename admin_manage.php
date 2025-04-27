@@ -15,6 +15,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_user'])) {
     $firstname = htmlspecialchars($_POST["firstname"]);
     $lastname = htmlspecialchars($_POST["lastname"]);
     $department = htmlspecialchars($_POST["department"]);
+    $pin = htmlspecialchars($_POST["pin"]);
+    $RFID_UID = htmlspecialchars($_POST["RFID_UID"]);
     $role = isset($_POST["role"]) && $_POST["role"] === "Admin" ? "Admin" : "User"; // Default to "User"
 
     // Handle file upload (picture)
@@ -25,9 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_user'])) {
     }
 
     // Prepare and execute SQL query to add a user
-    $sql = "INSERT INTO users (picture, username, password, firstname, lastname, department, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (picture, username, password, firstname, lastname, department, pin, RFID_UID, role) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssss", $picture, $username, $password, $firstname, $lastname, $department, $role);
+    $stmt->bind_param("sssssssss", $picture, $username, $password, $firstname, $lastname, $department, $pin, $RFID_UID, $role);
 
     if ($stmt->execute()) {
         echo "<div style='color: green;'>User added successfully.</div>";
@@ -55,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_user'])) {
 }
 
 // Retrieve all users to display
-$sql = "SELECT id, firstname, lastname, username, department, role, picture FROM users";
+$sql = "SELECT id, firstname, lastname, username, department, pin, RFID_UID, role, picture FROM users";
 $result = $conn->query($sql);
 ?>
 
@@ -115,6 +118,10 @@ $result = $conn->query($sql);
         <input type="password" name="password" required><br><br>
         <label>Department:</label>
         <input type="text" name="department" required><br><br>
+        <label>PIN:</label>
+        <input type="text" name="pin" maxlength="4" pattern="\d{4}" title="Enter a 4-digit PIN" required><br><br>
+        <label>RFID UID:</label>
+        <input type="text" name="RFID_UID" maxlength="8" required><br><br>
         <label>Role:</label>
         <select name="role">
             <option value="User">User</option>
@@ -135,6 +142,8 @@ $result = $conn->query($sql);
                 <th>Last Name</th>
                 <th>Username</th>
                 <th>Department</th>
+                <th>PIN</th>
+                <th>RFID UID</th>
                 <th>Role</th>
                 <th>Actions</th>
             </tr>
@@ -154,6 +163,8 @@ $result = $conn->query($sql);
                 <td><?= htmlspecialchars($row['lastname']) ?></td>
                 <td><?= htmlspecialchars($row['username']) ?></td>
                 <td><?= htmlspecialchars($row['department']) ?></td>
+                <td><?= htmlspecialchars($row['pin']) ?></td>
+                <td><?= htmlspecialchars($row['RFID_UID']) ?></td>
                 <td><?= htmlspecialchars($row['role']) ?></td>
                 <td>
                     <form method="POST" action="" style="display: inline-block;">
