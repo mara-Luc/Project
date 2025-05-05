@@ -3,7 +3,7 @@ require "php_serial.class.php";
 
 $serial = new phpSerial();
 $serial->deviceSet("/dev/ttyUSB0"); // Adjust for your serial device
-$serial->confBaudRate(9600);
+$serial->confBaudRate(2400);
 $serial->confParity("none");
 $serial->confCharacterLength(8);
 $serial->confStopBits(1);
