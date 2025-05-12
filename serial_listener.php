@@ -17,7 +17,8 @@ while (true) {
         shell_exec("raspivid -o /var/www/html/live.h264 -t 0 &");
 
         // Notify web server
-        $ch = curl_init("http://10.0.0.184/notify.php"); //IP of server
+        $ch = curl_init("http://10.0.0.184:5555/notify.php");
+        //$ch = curl_init("http://10.0.0.184/notify.php"); //IP of server
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, "event=recording_started");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
