@@ -3,7 +3,7 @@ session_start(); // Start session to manage user authentication
 
 // Include the database connection file
 include 'db_connect.php';
-include 'functions.php'; // Include reusable functions
+include 'User_Card.php'; // Include reusable functions
 
 // Check if the user is logged in and has the right role
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
