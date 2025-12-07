@@ -56,7 +56,7 @@ function renderUserCard(array $user): string {
             <div class="nav-menu" id="navMenu">
                 <ul>
                     <li><a href="index.php" class="link">Login</a></li>
-                    <li><a href="monitoring_3.php" class="link active">Monitoring Center</a></li>
+                    <li><a href="monitoring_2.php" class="link active">Monitoring Center</a></li>
                     <li><a href="admin_manage.php" class="link">Control Center</a></li>
                     <li><a href="history.php" class="link">History</a></li>
                     <li><a href="logs.php" class="link">Logs</a></li>
