@@ -22,6 +22,56 @@ $result = $conn->query($sql);
     <title>Portals | Monitoring Center</title>
 </head>
 <body>
+
+    <style>
+        /* Basic page styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .user-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .user-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            width: 200px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .user-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        .user-card p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .user-card .department {
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+    
     <div class="wrapper">
         <!-- Navigation bar (same as login) -->
         <nav class="nav">
@@ -30,7 +80,7 @@ $result = $conn->query($sql);
             </div>
             <div class="nav-menu" id="navMenu">
                 <ul>
-                    <li><a href="login.php" class="link">Login</a></li>
+                    <li><a href="index.php" class="link">Login</a></li>
                     <li><a href="monitoring_2.php" class="link active">Monitoring Center</a></li>
                     <li><a href="admin_manage.php" class="link">Control Center</a></li>
                     <li><a href="history.php" class="link">History</a></li>
