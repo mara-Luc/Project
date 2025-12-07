@@ -17,6 +17,24 @@ if ($result && $result->num_rows > 0) {
     $users = $result->fetch_all(MYSQLI_ASSOC);
 }
 $conn->close();
+
+/**
+ * Helper function to render a user card
+ */
+function renderUserCard(array $user): string {
+    $picture = base64_encode($user['picture']);
+    $firstname = htmlspecialchars($user['firstname']);
+    $lastname = htmlspecialchars($user['lastname']);
+    $department = htmlspecialchars($user['department']);
+
+    return <<<HTML
+        <div class="user-card">
+            <img src="data:image/jpeg;base64,{$picture}" alt="User Picture">
+            <p>{$firstname} {$lastname}</p>
+            <p class="department">{$department}</p>
+        </div>
+    HTML;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,11 +70,7 @@ $conn->close();
             <div class="user-grid">
                 <?php if (!empty($users)): ?>
                     <?php foreach ($users as $user): ?>
-                        <div class="user-card">
-                            <img src="data:image/jpeg;base64,<?= base64_encode($user['picture']) ?>" alt="User Picture">
-                            <p><?= htmlspecialchars($user['firstname']) . " " . htmlspecialchars($user['lastname']) ?></p>
-                            <p class="department"><?= htmlspecialchars($user['department']) ?></p>
-                        </div>
+                        <?= renderUserCard($user) ?>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <p>No users found in the database.</p>
