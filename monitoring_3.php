@@ -1,85 +1,49 @@
 <?php
-session_start();
-include 'db_connect.php';
+session_start(); // Start session to manage user authentication
 
-// Restrict access to Admin role
+// Include the database connection file
+include 'db_connect.php';
+include 'functions.php'; // Include reusable functions
+
+// Check if the user is logged in and has the right role
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
     echo "Access denied. You must be an Admin to view this page.";
     exit;
 }
 
+// Query to retrieve user data
 $sql = "SELECT picture, firstname, lastname, department FROM users";
 $result = $conn->query($sql);
-
-// Fetch all rows into an array
-$users = [];
-if ($result && $result->num_rows > 0) {
-    $users = $result->fetch_all(MYSQLI_ASSOC);
-}
-$conn->close();
-
-/**
- * Helper function to render a user card
- */
-function renderUserCard(array $user): string {
-    $picture = base64_encode($user['picture']);
-    $firstname = htmlspecialchars($user['firstname']);
-    $lastname = htmlspecialchars($user['lastname']);
-    $department = htmlspecialchars($user['department']);
-
-    return <<<HTML
-        <div class="user-card">
-            <img src="data:image/jpeg;base64,{$picture}" alt="User Picture">
-            <p>{$firstname} {$lastname}</p>
-            <p class="department">{$department}</p>
-        </div>
-    HTML;
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <title>Portals | Monitoring Center</title>
+    <title>Monitoring Center</title>
+    <link rel="stylesheet" href="style.css"> <!-- External CSS -->
 </head>
 <body>
-    <div class="wrapper">
-        <!-- Navigation bar -->
-        <nav class="nav">
-            <div class="nav-logo">
-                <p>Portalz.</p>
-            </div>
-            <div class="nav-menu" id="navMenu">
-                <ul>
-                    <li><a href="index.php" class="link">Login</a></li>
-                    <li><a href="monitoring_2.php" class="link active">Monitoring Center</a></li>
-                    <li><a href="admin_manage.php" class="link">Control Center</a></li>
-                    <li><a href="history.php" class="link">History</a></li>
-                    <li><a href="logs.php" class="link">Logs</a></li>
-                </ul>
-            </div>
-        </nav>
-
-        <!-- Monitoring Center content -->
-        <div class="container">
-            <h1>Monitoring Center</h1>
-            <div class="user-grid">
-                <?php if (!empty($users)): ?>
-                    <?php foreach ($users as $user): ?>
-                        <?= renderUserCard($user) ?>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No users found in the database.</p>
-                <?php endif; ?>
-            </div>
+    <div class="container">
+        <h1>Monitoring Center</h1>
+        <div class="user-grid">
+            <?php
+            // Display user data in a grid format using reusable function
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo renderUserCard($row['picture'], $row['firstname'], $row['lastname'], $row['department']);
+                }
+            } else {
+                echo "<p>No users found in the database.</p>";
+            }
+            // Close the database connection
+            $conn->close();
+            ?>
         </div>
     </div>
 
-    <!-- Security Alert Popup -->
+    <!-- JavaScript to pop up video -->
     <script>
         function checkSecurityAlert() {
             fetch("get_alert.php")
@@ -93,13 +57,17 @@ function renderUserCard(array $user): string {
 
         function showPopup(message) {
             let popup = document.createElement("div");
-            popup.className = "alert-popup";
-            popup.innerHTML = `<strong>${message}</strong>`;
+            popup.innerHTML = `<div style='position: fixed; top: 20%; left: 50%; transform: translate(-50%, -50%);
+                        background: red; color: white; padding: 20px; border-radius: 10px; font-size: 18px;
+                        box-shadow: 0px 0px 10px black; text-align: center;'>
+                        <strong>${message}</strong></div>`;
+
             document.body.appendChild(popup);
             setTimeout(() => { popup.remove(); }, 5000);
         }
 
         setInterval(checkSecurityAlert, 3000);
     </script>
+    <!-- end of JavaScript -->
 </body>
 </html>
