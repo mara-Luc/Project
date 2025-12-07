@@ -62,3 +62,48 @@ function fetchText()
                 document.getElementById("demo").innerHTML = myText;
             }
     }
+
+    /* new stuff for monitoring center */
+    /* ------------------- SECURITY ALERT POPUP ------------------- */
+function checkSecurityAlert() {
+    fetch("get_alert.php")
+        .then(res => res.text())
+        .then(msg => {
+            if (msg.trim() !== "") showPopup(msg);
+        });
+}
+
+function showPopup(message) {
+    const div = document.createElement("div");
+    div.className = "alert-popup";
+    div.textContent = message;
+
+    document.body.appendChild(div);
+
+    setTimeout(() => div.remove(), 5000);
+}
+
+setInterval(checkSecurityAlert, 3000);
+
+
+/* ------------------- SEARCH FILTER ------------------- */
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("searchInput");
+
+    if (!input) return;
+
+    input.addEventListener("keyup", () => {
+        const filter = input.value.toLowerCase();
+        const cards = document.querySelectorAll(".user-card");
+
+        cards.forEach(card => {
+            const name = card.querySelector(".name").textContent.toLowerCase();
+            const dept = card.querySelector(".department").textContent.toLowerCase();
+
+            card.style.display =
+                name.includes(filter) || dept.includes(filter)
+                    ? "block"
+                    : "none";
+        });
+    });
+});
