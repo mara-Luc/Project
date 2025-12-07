@@ -10,6 +10,13 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
 
 $sql = "SELECT picture, firstname, lastname, department FROM users";
 $result = $conn->query($sql);
+
+// Fetch all rows into an array
+$users = [];
+if ($result && $result->num_rows > 0) {
+    $users = $result->fetch_all(MYSQLI_ASSOC);
+}
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,21 +50,17 @@ $result = $conn->query($sql);
         <div class="container">
             <h1>Monitoring Center</h1>
             <div class="user-grid">
-                <?php
-                // Display user data in a grid format
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<div class='user-card'>";
-                        echo "<img src='data:image/jpeg;base64," . base64_encode($row['picture']) . "' alt='User Picture'>";
-                        echo "<p>" . htmlspecialchars($row['firstname']) . " " . htmlspecialchars($row['lastname']) . "</p>";
-                        echo "<p class='department'>" . htmlspecialchars($row['department']) . "</p>";
-                        echo "</div>";
-                    }
-                } else {
-                    echo "<p>No users found in the database.</p>";
-                }
-                $conn->close();
-                ?>
+                <?php if (!empty($users)): ?>
+                    <?php foreach ($users as $user): ?>
+                        <div class="user-card">
+                            <img src="data:image/jpeg;base64,<?= base64_encode($user['picture']) ?>" alt="User Picture">
+                            <p><?= htmlspecialchars($user['firstname']) . " " . htmlspecialchars($user['lastname']) ?></p>
+                            <p class="department"><?= htmlspecialchars($user['department']) ?></p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No users found in the database.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
