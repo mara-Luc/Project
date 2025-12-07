@@ -240,7 +240,7 @@ header{
     }
 }
 
-/* Monitoring Center grid */
+/* Monitoring Center grid 
 .user-grid {
     display: flex;
     flex-wrap: wrap;
@@ -279,9 +279,9 @@ header{
 .user-card .department {
     color: #777;
     font-size: 14px;
-}
+}*/
 
-/* Alert popup */
+/* Alert popup 
 .alert-popup {
     position: fixed;
     top: 20%;
@@ -295,4 +295,57 @@ header{
     box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
     text-align: center;
     z-index: 9999;
+}*/
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    margin: 20px auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.user-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.user-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    width: 200px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.user-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.user-card p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.user-card .department {
+    color: #777;
+    font-size: 14px;
 }
