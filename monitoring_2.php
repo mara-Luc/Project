@@ -26,12 +26,12 @@ $result = $conn->query($sql);
         <!-- Navigation bar (same as login) -->
         <nav class="nav">
             <div class="nav-logo">
-                <p>Portals.</p>
+                <p>Portalz.</p>
             </div>
             <div class="nav-menu" id="navMenu">
                 <ul>
                     <li><a href="login.php" class="link">Login</a></li>
-                    <li><a href="monitoring.php" class="link active">Monitoring Center</a></li>
+                    <li><a href="monitoring_2.php" class="link active">Monitoring Center</a></li>
                     <li><a href="admin_manage.php" class="link">Control Center</a></li>
                     <li><a href="history.php" class="link">History</a></li>
                     <li><a href="logs.php" class="link">Logs</a></li>
@@ -40,28 +40,28 @@ $result = $conn->query($sql);
         </nav>
 
         <!-- Monitoring Center content -->
-        <div class="form-box">
-            <div class="monitoring-container">
-                <div class="top">
-                    <header>Monitoring Center</header>
-                </div>
-                <div class="user-grid">
-                    <?php
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<div class='user-card'>";
-                            echo "<img src='data:image/jpeg;base64," . base64_encode($row['picture']) . "' alt='User Picture'>";
-                            echo "<p>" . htmlspecialchars($row['firstname']) . " " . htmlspecialchars($row['lastname']) . "</p>";
-                            echo "<p class='department'>" . htmlspecialchars($row['department']) . "</p>";
-                            echo "</div>";
-                        }
-                    } else {
-                        echo "<p>No users found in the database.</p>";
-                    }
-                    $conn->close();
-                    ?>
-                </div>
-            </div>
+        
+        <div class="container">
+        <h1>Monitoring Center</h1>
+        <div class="user-grid">
+            <?php
+            // Display user data in a grid format
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<div class='user-card'>";
+                    echo "<img src='data:image/jpeg;base64," . base64_encode($row['picture']) . "' alt='User Picture'>";
+                    echo "<p>" . htmlspecialchars($row['firstname']) . " " . htmlspecialchars($row['lastname']) . "</p>";
+                    echo "<p class='department'>" . htmlspecialchars($row['department']) . "</p>";
+                    echo "</div>";
+                }
+            } else {
+                echo "<p>No users found in the database.</p>";
+            }
+            // Close the database connection
+            $conn->close();
+            ?>
+        </div>
+    </div>
         </div>
     </div>
 
