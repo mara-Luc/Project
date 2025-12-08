@@ -49,7 +49,7 @@ $result = $conn->query($sql);
     </div>
 </div>
 
-<script src="script.js?v=<?php echo time(); ?>"></script>
+<script src="Sandbox.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
 
