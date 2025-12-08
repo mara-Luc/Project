@@ -5,6 +5,7 @@ include 'db_connect.php'; // Database connection
 // Check if the user is logged in and is an Admin
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
     echo "<div style='color: red;'>Access denied. Admins only.</div>";
+    header("Location: index.php"); //where to go after you log in
     exit;
 }
 
@@ -68,40 +69,7 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Management</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
-        }
-        h1 {
-            text-align: center;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-    </style>
+    
 </head>
 <body>
     <h1>Admin Management Page</h1>
