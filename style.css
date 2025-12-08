@@ -333,3 +333,121 @@ td img {
     object-fit: cover;
     border: 2px solid #fff;
 }
+/*  Admin  */
+/* ===========================
+   ADMIN MANAGEMENT PAGE
+   =========================== */
+.admin-container {
+    width: 80%;
+    margin: 40px auto;
+    color: #fff;
+}
+
+.admin-container h1, 
+.admin-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+/* Form styling */
+.admin-form {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.admin-form label {
+    display: block;
+    margin: 10px 0 5px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.admin-form input, 
+.admin-form select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    margin-bottom: 15px;
+}
+
+.admin-form input:focus, 
+.admin-form select:focus {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.admin-form button {
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .3s ease;
+}
+
+.admin-form button:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Feedback messages */
+.success-message {
+    color: #4CAF50;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    color: #FF5252;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Table styling */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.admin-table th, 
+.admin-table td {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    text-align: center;
+}
+
+.admin-table th {
+    background: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+}
+
+.admin-table img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+}
+
+/* Delete button */
+.btn-danger {
+    background: #FF5252;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+.btn-danger:hover {
+    background: #E53935;
+}
