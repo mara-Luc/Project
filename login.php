@@ -1,9 +1,9 @@
 <?php
 session_start();
-include 'db_connect.php'; // A file for database connection logic
+include 'db_connect.php'; // Database connection
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = $_POST['username'];
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
     // Query the database for user details
@@ -13,27 +13,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
+    if ($result && $result->num_rows > 0) {
         $user = $result->fetch_assoc();
-        
+
         // Verify password
         if (password_verify($password, $user['password'])) {
             $_SESSION['username'] = $username;
-            $_SESSION['role'] = $user['role']; // Ensure this column exists in the database
+            $_SESSION['role'] = $user['role']; // Ensure 'role' column exists
 
-            // Redirect Admin to monitoring page
             if ($user['role'] === 'Admin') {
-                header("Location: monitoring.php"); //where to go after you log in
+                header("Location: monitoring.php");
                 exit;
             } else {
-                echo "<div style='color: red;'>Access denied. Only Admins can access this page.</div>";
-                header("Location: index.php"); //where to go after you log in
+                // Redirect non-admins back to index with a flag
+                header("Location: index.php?error=access_denied");
+                exit;
             }
         } else {
-            echo "<div style='color: red;'>Invalid password.</div>";
+            header("Location: index.php?error=invalid_password");
+            exit;
         }
     } else {
-        echo "<div style='color: red;'>User not found.</div>";
+        header("Location: index.php?error=user_not_found");
+        exit;
     }
 }
 ?>

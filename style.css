@@ -459,3 +459,11 @@ td img {
 .btn-danger:hover {
     background: #E53935;
 }
+
+/*  login by non-admin  */
+.error-message {
+    color: #FF5252;
+    font-weight: 600;
+    margin: 15px 0;
+    text-align: center;
+}
