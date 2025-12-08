@@ -23,15 +23,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 header("Location: monitoring.php");
                 exit;
             } else {
-                header("Location: login.php?error=access_denied");
+                header("Location: index.php?error=access_denied");
                 exit;
             }
         } else {
-            header("Location: login.php?error=invalid_password");
+            header("Location: index.php?error=invalid_password");
             exit;
         }
     } else {
-        header("Location: login.php?error=user_not_found");
+        header("Location: index.php?error=user_not_found");
         exit;
     }
 }
