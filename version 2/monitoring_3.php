@@ -2,7 +2,7 @@
 session_start();
 
 include 'db_connect.php';
-include 'User_Card.php';
+include 'User_Card_2.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
     echo "Access denied. Admins only.";
@@ -17,7 +17,7 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <title>Monitoring Center</title>
-    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="monitoring.css?v=<?php echo time(); ?>">
 </head>
 <body>
 
@@ -49,7 +49,7 @@ $result = $conn->query($sql);
     </div>
 </div>
 
-<script src="script.js?v=<?php echo time(); ?>"></script>
+<script src="Sandbox.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
 
