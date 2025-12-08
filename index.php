@@ -17,7 +17,7 @@
             <div class="nav-menu" id="navMenu">
                 <ul>
                     <li><a href="index.php" class="link active">Login</a></li>
-                    <li><a href="monitoring_2.php" class="link">Monitoring Center</a></li>
+                    <li><a href="monitoring.php" class="link">Monitoring Center</a></li>
                     <li><a href="admin_manage.php" class="link">Control Center</a></li>
                     <li><a href="history.php" class="link">History</a></li>
                     <li><a href="logs.php" class="link">Logs</a></li>
