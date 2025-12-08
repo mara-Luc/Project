@@ -24,15 +24,36 @@
                 </ul>
             </div>
         </nav>
-        <!----------------------------- Form box ----------------------------------->    
-        <form action="login.php" method="POST"><!---->
+
+        <!----------------------------- Form box ----------------------------------->
+        <form action="login.php" method="POST">
             <div class="form-box">
-            <!------------------- login form -------------------------->
-            
+                <!------------------- login form -------------------------->
+
                 <div class="login-container" id="login">
                     <div class="top">
                         <header>Login</header>
                     </div>
+
+                    <!-- Error message block -->
+                    <?php if (isset($_GET['error'])): ?>
+                        <div class="error-message">
+                            <?php
+                            switch ($_GET['error']) {
+                                case 'access_denied':
+                                    echo "Access denied. Only Admins can access the Monitoring Center.";
+                                    break;
+                                case 'invalid_password':
+                                    echo "Invalid password.";
+                                    break;
+                                case 'user_not_found':
+                                    echo "User not found.";
+                                    break;
+                            }
+                            ?>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="input-box">
                         <input type="text" id="username" name="username" class="input-field" placeholder="Username or Email" required>
                         <i class="bx bx-user"></i>
@@ -45,8 +66,10 @@
                         <input type="submit" class="submit" value="Sign In">
                     </div>
                 </div>
-            </form>
- 
+            </div>
+        </form>
+    </div>
+
     <script>
        function myMenuFunction() {
            var i = document.getElementById("navMenu");
