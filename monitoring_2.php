@@ -60,28 +60,5 @@ $result = $conn->query($sql);
             </div>
         </div>
     </div>
-
-    <!-- Security Alert Popup -->
-    <script>
-        function checkSecurityAlert() {
-            fetch("get_alert.php")
-                .then(response => response.text())
-                .then(data => {
-                    if (data) {
-                        showPopup(data);
-                    }
-                });
-        }
-
-        function showPopup(message) {
-            let popup = document.createElement("div");
-            popup.className = "alert-popup";
-            popup.innerHTML = `<strong>${message}</strong>`;
-            document.body.appendChild(popup);
-            setTimeout(() => { popup.remove(); }, 5000);
-        }
-
-        setInterval(checkSecurityAlert, 3000);
-    </script>
 </body>
 </html>
