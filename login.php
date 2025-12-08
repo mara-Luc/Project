@@ -23,10 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             // Redirect Admin to monitoring page
             if ($user['role'] === 'Admin') {
-                header("Location: admin_manage.php"); //where to go after you log in
+                header("Location: monitoring.php"); //where to go after you log in
                 exit;
             } else {
                 echo "<div style='color: red;'>Access denied. Only Admins can access this page.</div>";
+                header("Location: index.php"); //where to go after you log in
             }
         } else {
             echo "<div style='color: red;'>Invalid password.</div>";
