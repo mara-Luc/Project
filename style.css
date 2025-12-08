@@ -6,12 +6,20 @@
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
-body{
+/*body{
     background: url("images/5.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
     overflow: hidden;
+}*/
+body {
+    background: url("images/5.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    overflow-y: auto;   /* ✅ fix scrolling */
+    overflow-x: hidden; /* optional */
 }
 .wrapper{
     display: flex;
