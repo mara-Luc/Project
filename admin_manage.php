@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'db_connect.php';
+include 'User_Card.php';
 
 // Restrict access
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
@@ -11,14 +12,14 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
 
 // Add user
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_user'])) {
-    $username = htmlspecialchars($_POST["username"]);
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
-    $firstname = htmlspecialchars($_POST["firstname"]);
-    $lastname = htmlspecialchars($_POST["lastname"]);
+    $username   = htmlspecialchars($_POST["username"]);
+    $password   = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $firstname  = htmlspecialchars($_POST["firstname"]);
+    $lastname   = htmlspecialchars($_POST["lastname"]);
     $department = htmlspecialchars($_POST["department"]);
-    $pin = htmlspecialchars($_POST["pin"]);
-    $RFID_UID = htmlspecialchars($_POST["RFID_UID"]);
-    $role = ($_POST["role"] === "Admin") ? "Admin" : "User";
+    $pin        = htmlspecialchars($_POST["pin"]);
+    $RFID_UID   = htmlspecialchars($_POST["RFID_UID"]);
+    $role       = ($_POST["role"] === "Admin") ? "Admin" : "User";
 
     $picture = (isset($_FILES["picture"]) && $_FILES["picture"]["error"] == 0) 
         ? file_get_contents($_FILES["picture"]["tmp_name"]) 
@@ -119,4 +120,20 @@ $result = $conn->query($sql);
                         <th>Role</th>
                         <th>Actions</th>
                     </tr>
-                </thead
+                </thead>
+                <tbody>
+                    <?php
+                    if ($result && $result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo renderUserRow($row); // helper function
+                        }
+                    } else {
+                        echo "<tr><td colspan='10'>No users found in the database.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
