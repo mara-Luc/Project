@@ -3,9 +3,10 @@ session_start();
 include 'db_connect.php';
 include 'User_Card.php'; // <-- include reusable rendering functions
 
-// Restrict access to Admin role
+// Restrict access
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
-    echo "<div class='error-message'>Access denied. You must be an Admin to view this page.</div>";
+    echo "<div class='error-message'>Access denied. Admins only.</div>";
+    header("Location: index.php");
     exit;
 }
 
