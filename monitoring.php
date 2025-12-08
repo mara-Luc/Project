@@ -1,13 +1,15 @@
 <?php
 session_start();
 include 'db_connect.php';
+include 'User_Card.php'; // <-- include reusable rendering functions
 
 // Restrict access to Admin role
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
-    echo "Access denied. You must be an Admin to view this page.";
+    echo "<div class='error-message'>Access denied. You must be an Admin to view this page.</div>";
     exit;
 }
 
+// Retrieve users
 $sql = "SELECT picture, firstname, lastname, department FROM users";
 $result = $conn->query($sql);
 ?>
@@ -22,9 +24,8 @@ $result = $conn->query($sql);
     <title>Portals | Monitoring Center</title>
 </head>
 <body>
-    
     <div class="wrapper">
-        <!-- Navigation bar (same as login) -->
+        <!-- Navigation bar -->
         <nav class="nav">
             <div class="nav-logo">
                 <p>Portalz.</p>
@@ -32,7 +33,7 @@ $result = $conn->query($sql);
             <div class="nav-menu" id="navMenu">
                 <ul>
                     <li><a href="index.php" class="link">Login</a></li>
-                    <li><a href="monitoring_2.php" class="link active">Monitoring Center</a></li>
+                    <li><a href="monitoring.php" class="link active">Monitoring Center</a></li>
                     <li><a href="admin_manage.php" class="link">Control Center</a></li>
                     <li><a href="history.php" class="link">History</a></li>
                     <li><a href="logs.php" class="link">Logs</a></li>
@@ -41,28 +42,20 @@ $result = $conn->query($sql);
         </nav>
 
         <!-- Monitoring Center content -->
-        
         <div class="container">
-        <h1>Monitoring Center</h1>
-        <div class="user-grid">
-            <?php
-            // Display user data in a grid format
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<div class='user-card'>";
-                    echo "<img src='data:image/jpeg;base64," . base64_encode($row['picture']) . "' alt='User Picture'>";
-                    echo "<p>" . htmlspecialchars($row['firstname']) . " " . htmlspecialchars($row['lastname']) . "</p>";
-                    echo "<p class='department'>" . htmlspecialchars($row['department']) . "</p>";
-                    echo "</div>";
+            <h1>Monitoring Center</h1>
+            <div class="user-grid">
+                <?php
+                if ($result && $result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo renderUserCard($row); // <-- use helper function
+                    }
+                } else {
+                    echo "<p>No users found in the database.</p>";
                 }
-            } else {
-                echo "<p>No users found in the database.</p>";
-            }
-            // Close the database connection
-            $conn->close();
-            ?>
-        </div>
-    </div>
+                $conn->close();
+                ?>
+            </div>
         </div>
     </div>
 </body>
