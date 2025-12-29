@@ -1,51 +1,29 @@
 <?php
-/*************************************************
- * USER RENDER HELPERS
- * - renderUserCard(): Monitoring Center cards
- * - renderUserRow(): Admin table rows
- *************************************************/
-
-function renderUserCard($row) {
-    $name = htmlspecialchars($row['firstname'] . ' ' . $row['lastname']);
-    $department = htmlspecialchars($row['department']);
-
-    $picture = !empty($row['picture'])
-        ? "data:image/jpeg;base64," . base64_encode($row['picture'])
-        : "https://via.placeholder.com/100";
-
-    return "
-    <div class='user-card'>
-        <img src='{$picture}'>
-        <p>{$name}</p>
-        <p class='department'>{$department}</p>
-    </div>";
-}
-
+/* =====================
+   USER ROW RENDERER
+   ===================== */
 function renderUserRow($row) {
     $id = (int)$row['id'];
-    $name = htmlspecialchars($row['firstname'] . ' ' . $row['lastname']);
+    $name = htmlspecialchars($row['firstname'].' '.$row['lastname']);
     $username = htmlspecialchars($row['username']);
-    $department = htmlspecialchars($row['department']);
-    $rfid = htmlspecialchars($row['RFID_UID']);
+    $dept = htmlspecialchars($row['department']);
     $role = htmlspecialchars($row['role']);
+    $status = htmlspecialchars($row['status']);
 
     $picture = !empty($row['picture'])
-        ? "data:image/jpeg;base64," . base64_encode($row['picture'])
-        : "https://via.placeholder.com/50";
+        ? "data:image/jpeg;base64,".base64_encode($row['picture'])
+        : "https://via.placeholder.com/40";
 
     return "
-    <tr>
-        <td><img src='{$picture}'></td>
-        <td>{$name}</td>
-        <td>{$username}</td>
-        <td>{$department}</td>
-        <td>{$rfid}</td>
-        <td>{$role}</td>
-        <td>
-            <form method='POST' style='display:inline'>
-                <input type='hidden' name='user_id' value='{$id}'>
-                <button name='delete_user' class='icon-btn delete'>🗑</button>
-            </form>
-        </td>
+    <tr onclick=\"openProfile($id)\">
+      <td><img src='$picture'></td>
+      <td>$name</td>
+      <td>$username</td>
+      <td>$dept</td>
+      <td><span class='status $status'>$status</span></td>
+      <td>$role</td>
+      <td>
+        <button onclick=\"event.stopPropagation();openEdit($id)\">✏️</button>
+      </td>
     </tr>";
 }
