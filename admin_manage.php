@@ -1,139 +1,250 @@
 <?php
-session_start();
-include 'db_connect.php';
-include 'User_Card.php';
+/*************************************************
+ * ADMIN MANAGE PAGE
+ * - Restricts access to Admins
+ * - Handles search & filtering
+ * - Handles add & delete user
+ * - Displays glass-panel UI
+ *************************************************/
 
-// Restrict access
+session_start();
+require_once 'db_connect.php';
+require_once 'User_Card.php';
+
+/* =============================
+   ACCESS CONTROL
+   ============================= */
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
-    echo "<div class='error-message'>Access denied. Admins only.</div>";
     header("Location: index.php");
     exit;
 }
 
-// Add user
+/* =============================
+   ADD USER HANDLER (MODAL FORM)
+   ============================= */
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_user'])) {
-    $username   = htmlspecialchars($_POST["username"]);
-    $password   = password_hash($_POST["password"], PASSWORD_DEFAULT);
-    $firstname  = htmlspecialchars($_POST["firstname"]);
-    $lastname   = htmlspecialchars($_POST["lastname"]);
-    $department = htmlspecialchars($_POST["department"]);
-    $pin        = htmlspecialchars($_POST["pin"]);
-    $RFID_UID   = htmlspecialchars($_POST["RFID_UID"]);
-    $role       = ($_POST["role"] === "Admin") ? "Admin" : "User";
 
-    $picture = (isset($_FILES["picture"]) && $_FILES["picture"]["error"] == 0) 
-        ? file_get_contents($_FILES["picture"]["tmp_name"]) 
+    // Collect & sanitize input
+    $firstname  = trim($_POST['firstname']);
+    $lastname   = trim($_POST['lastname']);
+    $username   = trim($_POST['username']);
+    $password   = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $department = trim($_POST['department']);
+    $pin        = trim($_POST['pin']);
+    $RFID_UID   = trim($_POST['RFID_UID']);
+    $role       = ($_POST['role'] === 'Admin') ? 'Admin' : 'User';
+
+    // Handle profile picture (stored as BLOB – unchanged from your system)
+    $picture = (!empty($_FILES['picture']['tmp_name']))
+        ? file_get_contents($_FILES['picture']['tmp_name'])
         : null;
 
-    $sql = "INSERT INTO users (picture, username, password, firstname, lastname, department, pin, RFID_UID, role) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssss", $picture, $username, $password, $firstname, $lastname, $department, $pin, $RFID_UID, $role);
-
-    echo $stmt->execute() 
-        ? "<div class='success-message'>User added successfully.</div>" 
-        : "<div class='error-message'>Error adding user: " . $stmt->error . "</div>";
+    // Insert user
+    $stmt = $conn->prepare("
+        INSERT INTO users 
+        (picture, firstname, lastname, username, password, department, pin, RFID_UID, role)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param(
+        "sssssssss",
+        $picture,
+        $firstname,
+        $lastname,
+        $username,
+        $password,
+        $department,
+        $pin,
+        $RFID_UID,
+        $role
+    );
+    $stmt->execute();
     $stmt->close();
+
+    header("Location: admin_manage.php");
+    exit;
 }
 
-// Delete user
+/* =============================
+   DELETE USER HANDLER
+   ============================= */
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_user'])) {
-    $user_id = intval($_POST["user_id"]);
-    $sql = "DELETE FROM users WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_id);
+    $user_id = (int)$_POST['user_id'];
 
-    echo $stmt->execute() 
-        ? "<div class='success-message'>User deleted successfully.</div>" 
-        : "<div class='error-message'>Error deleting user: " . $stmt->error . "</div>";
+    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
     $stmt->close();
+
+    header("Location: admin_manage.php");
+    exit;
 }
 
-// Retrieve users
-$sql = "SELECT id, firstname, lastname, username, department, pin, RFID_UID, role, picture FROM users";
-$result = $conn->query($sql);
+/* =============================
+   SEARCH & FILTER LOGIC
+   ============================= */
+$where = [];
+$params = [];
+$types  = "";
+
+// Text search
+if (!empty($_GET['search'])) {
+    $where[] = "(firstname LIKE ? OR lastname LIKE ? OR username LIKE ?)";
+    $search = "%" . $_GET['search'] . "%";
+    $params[] = $search;
+    $params[] = $search;
+    $params[] = $search;
+    $types .= "sss";
+}
+
+// Role filter
+if (!empty($_GET['role'])) {
+    $where[] = "role = ?";
+    $params[] = $_GET['role'];
+    $types .= "s";
+}
+
+// Department filter
+if (!empty($_GET['department'])) {
+    $where[] = "department = ?";
+    $params[] = $_GET['department'];
+    $types .= "s";
+}
+
+// Build final SQL
+$sql = "SELECT * FROM users";
+if ($where) {
+    $sql .= " WHERE " . implode(" AND ", $where);
+}
+
+$stmt = $conn->prepare($sql);
+if ($params) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Management</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>User Management</title>
+
+<!-- YOUR EXISTING CSS -->
+<link rel="stylesheet" href="style.css">
+
+<!-- NEW GLASS + NEON LAYER -->
+<link rel="stylesheet" href="admin_glass.css">
 </head>
 <body>
-    <div class="wrapper">
-        <nav class="nav">
-            <div class="nav-logo"><p>Portalz.</p></div>
-            <div class="nav-menu" id="navMenu">
-                <ul>
-                    <li><a href="index.php" class="link">Login</a></li>
-                    <li><a href="monitoring.php" class="link">Monitoring Center</a></li>
-                    <li><a href="admin_manage.php" class="link active">Control Center</a></li>
-                    <li><a href="history.php" class="link">History</a></li>
-                    <li><a href="logs.php" class="link">Logs</a></li>
-                </ul>
-            </div>
-        </nav>
 
-        <div class="admin-container">
-            <h1>Admin Management Page</h1>
+<div class="wrapper">
 
-            <h2>Add User</h2>
-            <form method="POST" action="" enctype="multipart/form-data" class="admin-form">
-                <label>First Name:</label>
-                <input type="text" name="firstname" required>
-                <label>Last Name:</label>
-                <input type="text" name="lastname" required>
-                <label>Username:</label>
-                <input type="text" name="username" required>
-                <label>Password:</label>
-                <input type="password" name="password" required>
-                <label>Department:</label>
-                <input type="text" name="department" required>
-                <label>PIN:</label>
-                <input type="text" name="pin" maxlength="4" pattern="\d{4}" title="Enter a 4-digit PIN" required>
-                <label>RFID UID:</label>
-                <input type="text" name="RFID_UID" maxlength="8" required>
-                <label>Role:</label>
-                <select name="role">
-                    <option value="User">User</option>
-                    <option value="Admin">Admin</option>
-                </select>
-                <label>Profile Picture:</label>
-                <input type="file" name="picture" accept="image/*">
-                <button type="submit" name="add_user">Add User</button>
-            </form>
-
-            <h2>User List</h2>
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Picture</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Username</th>
-                        <th>Department</th>
-                        <th>PIN</th>
-                        <th>RFID UID</th>
-                        <th>Role</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    if ($result && $result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            echo renderUserRow($row); // helper function
-                        }
-                    } else {
-                        echo "<tr><td colspan='10'>No users found in the database.</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+<!-- NAVIGATION (UNCHANGED) -->
+<nav class="nav">
+    <div class="nav-logo"><p>Portalz.</p></div>
+    <div class="nav-menu">
+        <ul>
+            <li><a href="index.php" class="link">Login</a></li>
+            <li><a href="monitoring.php" class="link">Monitoring Center</a></li>
+            <li><a href="admin_manage.php" class="link active">Control Center</a></li>
+            <li><a href="history.php" class="link">History</a></li>
+            <li><a href="logs.php" class="link">Logs</a></li>
+        </ul>
     </div>
+</nav>
+
+<!-- MAIN ADMIN PANEL -->
+<div class="admin-panel">
+
+    <!-- HEADER PANEL -->
+    <div class="glass-panel panel-header">
+        <div>
+            <h1>User Management</h1>
+            <p>Manage users, access, and credentials</p>
+        </div>
+
+        <!-- SEARCH + FILTERS -->
+        <form method="GET" class="filter-form">
+            <input type="text" name="search" placeholder="Search..."
+                   value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+
+            <select name="role">
+                <option value="">All Roles</option>
+                <option value="Admin">Admin</option>
+                <option value="User">User</option>
+            </select>
+
+            <select name="department">
+                <option value="">All Departments</option>
+                <option value="IT">IT</option>
+                <option value="Sales">Sales</option>
+                <option value="Human Resources">Human Resources</option>
+            </select>
+
+            <button type="submit">Filter</button>
+        </form>
+
+        <button class="btn-primary" onclick="openAddUser()">+ Add User</button>
+    </div>
+
+    <!-- USER TABLE -->
+    <div class="glass-panel">
+        <table class="neon-table">
+            <thead>
+                <tr>
+                    <th>Profile</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Department</th>
+                    <th>RFID</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($row = $result->fetch_assoc()) {
+                    echo renderUserRow($row);
+                } ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+<!-- ADD USER MODAL -->
+<div id="addUserModal" class="modal">
+    <div class="modal-content glass-panel">
+        <h2>Add User</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <input name="firstname" placeholder="First Name" required>
+            <input name="lastname" placeholder="Last Name" required>
+            <input name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input name="department" placeholder="Department" required>
+            <input name="pin" maxlength="4" placeholder="PIN" required>
+            <input name="RFID_UID" placeholder="RFID UID" required>
+
+            <select name="role">
+                <option>User</option>
+                <option>Admin</option>
+            </select>
+
+            <input type="file" name="picture">
+
+            <button class="btn-primary" name="add_user">Create User</button>
+            <button type="button" onclick="closeAddUser()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function openAddUser() {
+    document.getElementById('addUserModal').style.display = 'block';
+}
+function closeAddUser() {
+    document.getElementById('addUserModal').style.display = 'none';
+}
+</script>
+
 </body>
 </html>
