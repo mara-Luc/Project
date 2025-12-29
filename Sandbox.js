@@ -1,109 +1,111 @@
-//using a function change my paragrah
-function changeText() 
-    {
-        document.getElementById("myParagraph").innerHTML = "The text has been changed!";
-    }
+// ----------------- CARD HANDLING -----------------
+let cardsContainer = document.getElementById("cardsContainer");
 
-//using a function to hide content
-function hidebtn() 
-{
-    var x = document.getElementById("myDIV");
-    
-    if (x.style.display === "none") 
-        {
-            x.style.display = "block";
-        } 
-        
-        else 
-            {
-                x.style.display = "none";
-            }
-    
+function addCard(uid = '', access=1, flags=0, expiry=0, authorized=true, timestamp=0) {
+    const div = document.createElement("div");
+    div.className = "card-item";
+    div.innerHTML = `
+        UID: <input type="text" class="card-uid" value="${uid}">
+        Access: <input type="number" class="card-access" value="${access}" min="1">
+        Flags: <input type="number" class="card-flags" value="${flags}" min="0">
+        Expiry: <input type="number" class="card-expiry" value="${expiry}">
+        Authorized: <input type="checkbox" class="card-auth" ${authorized?"checked":""}>
+        Timestamp: <input type="number" class="card-ts" value="${timestamp}">
+        <button type="button" onclick="removeCard(this)">Remove</button>
+    `;
+    cardsContainer.appendChild(div);
 }
 
-//using a function to change my images
-function imagemod() 
-    {
-        document.getElementById("myImg1").src = "picks/Digimon.jpg";
-        document.getElementById("myImg2").src = "picks/Digimon title.jpg";
-        document.getElementById("myImg3").src = "picks/digimon-adventure-tr.jpg";
-    }
+function removeCard(btn) {
+    btn.parentElement.remove();
+}
 
-//using a function to change a buttons text
-function changebtn(elem) 
-    {
-        elem.innerHTML = "Hello World!";
-    }
+// ----------------- FORM SUBMISSION -----------------
+function submitForm() {
+    const user_id = document.getElementById("user_id").value;
+    const firstname = document.getElementById("firstname").value;
+    const lastname = document.getElementById("lastname").value;
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const department = document.getElementById("department").value;
+    const role = document.getElementById("role").value;
+    const picture = document.getElementById("picture").files[0];
 
-//using a function to display onblur event
-function validateField()
-    {
-        var field = document.getElementById("requiredField");
-        var errorMessage = document.getElementById("errorMessage");
-        if (field.value.trim() === "") 
-            {
-                errorMessage.style.display = "inline";
-            } 
-        
-            else 
-                {
-                    errorMessage.style.display = "none";
-                }
-    }
+    let cards = [];
+    document.querySelectorAll(".card-item").forEach(c => {
+        cards.push({
+            uid: c.querySelector(".card-uid").value,
+            accessLevel: parseInt(c.querySelector(".card-access").value),
+            flags: parseInt(c.querySelector(".card-flags").value),
+            expiry: parseInt(c.querySelector(".card-expiry").value),
+            authorized_local: c.querySelector(".card-auth").checked,
+            timestamp: parseInt(c.querySelector(".card-ts").value)
+        });
+    });
 
-function fetchText()
-    {
-        getText("fetch_info.txt");
+    const formData = new FormData();
+    formData.append("firstname", firstname);
+    formData.append("lastname", lastname);
+    formData.append("username", username);
+    formData.append("password", password);
+    formData.append("department", department);
+    formData.append("role", role);
+    if (picture) formData.append("picture", picture);
+    formData.append("cards", JSON.stringify(cards));
+    if (user_id) formData.append("user_id", user_id);
 
-        async function getText(file) 
-            {
-                let myObject = await fetch(file);
-                let myText = await myObject.text();
-                document.getElementById("demo").innerHTML = myText;
-            }
-    }
+    const url = user_id ? 'edit_user.php' : 'add_user.php';
 
-    /* new stuff for monitoring center */
-    /* ------------------- SECURITY ALERT POPUP ------------------- */
-function checkSecurityAlert() {
-    fetch("get_alert.php")
-        .then(res => res.text())
-        .then(msg => {
-            if (msg.trim() !== "") showPopup(msg);
+    fetch(url, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("formMessage").innerText = data.message;
+            if(data.status === "success") setTimeout(() => location.reload(), 1000);
         });
 }
 
-function showPopup(message) {
-    const div = document.createElement("div");
-    div.className = "alert-popup";
-    div.textContent = message;
+// ----------------- EDIT USER -----------------
+function editUser(btn) {
+    const tr = btn.closest("tr");
+    const user = JSON.parse(tr.dataset.user);
+    const cards = JSON.parse(tr.dataset.cards);
 
-    document.body.appendChild(div);
+    document.getElementById("user_id").value = user.id;
+    document.getElementById("firstname").value = user.firstname;
+    document.getElementById("lastname").value = user.lastname;
+    document.getElementById("username").value = user.username;
+    document.getElementById("password").value = '';
+    document.getElementById("department").value = user.department;
+    document.getElementById("role").value = user.role;
 
-    setTimeout(() => div.remove(), 5000);
+    cardsContainer.innerHTML = '';
+    cards.forEach(uid => addCard(uid));
+    document.getElementById("formTitle").innerText = "Edit User";
 }
 
-setInterval(checkSecurityAlert, 3000);
+// ----------------- DELETE USER -----------------
+function deleteUser(user_id) {
+    if(!confirm("Are you sure you want to delete this user?")) return;
+    const formData = new FormData();
+    formData.append("user_id", user_id);
 
+    fetch("delete_user.php", { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if(data.status === "success") location.reload();
+        });
+}
 
-/* ------------------- SEARCH FILTER ------------------- */
+// ----------------- SEARCH FILTER -----------------
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("searchInput");
-
-    if (!input) return;
-
     input.addEventListener("keyup", () => {
         const filter = input.value.toLowerCase();
-        const cards = document.querySelectorAll(".user-card");
-
-        cards.forEach(card => {
-            const name = card.querySelector(".name").textContent.toLowerCase();
-            const dept = card.querySelector(".department").textContent.toLowerCase();
-
-            card.style.display =
-                name.includes(filter) || dept.includes(filter)
-                    ? "block"
-                    : "none";
+        document.querySelectorAll(".admin-table tbody tr").forEach(tr => {
+            const name = tr.cells[1].innerText.toLowerCase();
+            const dept = tr.cells[3].innerText.toLowerCase();
+            tr.style.display = name.includes(filter) || dept.includes(filter) ? "" : "none";
         });
     });
 });

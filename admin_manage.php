@@ -1,108 +1,95 @@
 <?php
-session_start();
-require_once 'db_connect.php';
-require_once 'User_Card.php';
-
-/* =====================
-   ADMIN ACCESS CHECK
-   ===================== */
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
-    header("Location: index.php");
-    exit;
-}
-
-/* =====================
-   PAGINATION SETUP
-   ===================== */
-$limit = 10; // users per page
-$page  = max(1, (int)($_GET['page'] ?? 1));
-$offset = ($page - 1) * $limit;
-
-/* =====================
-   BASE QUERY
-   ===================== */
-$sql = "SELECT SQL_CALC_FOUND_ROWS * FROM users ORDER BY id DESC LIMIT ?, ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $offset, $limit);
-$stmt->execute();
-$result = $stmt->get_result();
-
-/* Get total rows */
-$total = $conn->query("SELECT FOUND_ROWS()")->fetch_row()[0];
-$total_pages = ceil($total / $limit);
+require 'db_connect.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>User Management</title>
+<title>Admin Manage Users</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="admin_glass.css">
 </head>
 <body>
+<div class="container admin-container">
 
-<div class="wrapper">
+    <h1>Admin Management</h1>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-logo"><p>Portalz.</p></div>
-</nav>
+    <!-- Add/Edit User Form -->
+    <div class="admin-form">
+        <h2 id="formTitle">Add User</h2>
+        <input type="hidden" id="user_id" value="">
+        <label>First Name</label>
+        <input type="text" id="firstname" placeholder="First Name">
 
-<div class="admin-panel">
+        <label>Last Name</label>
+        <input type="text" id="lastname" placeholder="Last Name">
 
-<!-- HEADER -->
-<div class="glass-panel panel-header">
-  <div>
-    <h1>User Management</h1>
-    <p>Identity & access control console</p>
-  </div>
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Username">
 
-  <div class="panel-actions">
-    <input id="searchInput" placeholder="Search users...">
-    <select id="roleFilter">
-      <option value="">All Roles</option>
-      <option>Admin</option>
-      <option>User</option>
-    </select>
-    <button onclick="openAddUser()">+ Add User</button>
-  </div>
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Password (leave blank to keep current)">
+
+        <label>Department</label>
+        <input type="text" id="department" placeholder="Department">
+
+        <label>Role</label>
+        <select id="role">
+            <option value="Admin">Admin</option>
+            <option value="User" selected>User</option>
+        </select>
+
+        <label>Picture</label>
+        <input type="file" id="picture">
+
+        <h3>RFID Cards</h3>
+        <div id="cardsContainer"></div>
+        <button type="button" onclick="addCard()">Add Card</button>
+
+        <button type="button" id="submitBtn" onclick="submitForm()">Submit</button>
+        <p id="formMessage"></p>
+    </div>
+
+    <!-- Search Users -->
+    <input type="text" id="searchInput" placeholder="Search Users...">
+
+    <!-- Users Table -->
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Picture</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>Cards</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="usersTable">
+            <?php
+            $res = $conn->query("SELECT * FROM users");
+            while ($row = $res->fetch_assoc()):
+                $cardsRes = $conn->query("SELECT uid FROM user_cards WHERE user_id={$row['id']}");
+                $cards = [];
+                while($c = $cardsRes->fetch_assoc()){ $cards[] = $c['uid']; }
+            ?>
+            <tr data-user='<?php echo json_encode($row); ?>' data-cards='<?php echo json_encode($cards); ?>'>
+                <td><img src="data:image/jpeg;base64,<?php echo base64_encode($row['picture']); ?>" alt="pic"></td>
+                <td><?php echo $row['firstname']." ".$row['lastname']; ?></td>
+                <td><?php echo $row['username']; ?></td>
+                <td><?php echo $row['department']; ?></td>
+                <td><?php echo $row['role']; ?></td>
+                <td><?php echo implode(", ", $cards); ?></td>
+                <td>
+                    <button onclick="editUser(this)">Edit</button>
+                    <button onclick="deleteUser(<?php echo $row['id']; ?>)">Delete</button>
+                </td>
+            </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
 </div>
 
-<!-- USER TABLE -->
-<div class="glass-panel">
-  <table class="neon-table">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Username</th>
-        <th>Department</th>
-        <th>Status</th>
-        <th>Role</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="userTable">
-      <?php while ($row = $result->fetch_assoc()) {
-          echo renderUserRow($row);
-      } ?>
-    </tbody>
-  </table>
-</div>
-
-<!-- PAGINATION -->
-<div class="pagination">
-<?php for ($i=1;$i<=$total_pages;$i++): ?>
-  <a href="?page=<?= $i ?>" class="<?= $i==$page?'active':'' ?>">
-    <?= $i ?>
-  </a>
-<?php endfor; ?>
-</div>
-
-</div>
-</div>
-
-<?php include 'admin_ui_components.php'; ?>
-<script src="admin.js"></script>
+<script src="sandbox.js"></script>
 </body>
 </html>
