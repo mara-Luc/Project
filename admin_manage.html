@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Management</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="admin-container">
+    <h1>User Management</h1>
+
+    <!-- Search -->
+    <input type="text" id="searchInput" placeholder="Search users..." class="input-field">
+
+    <!-- Add User -->
+    <button onclick="openAdd()">Add User</button>
+
+    <!-- Table -->
+    <table class="admin-table">
+        <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for user in users %}
+        <tr class="user-row">
+            <td>{{ user.firstname }} {{ user.lastname }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.department }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+                <button onclick="editUser({{ user.id }})">Edit</button>
+                <button onclick="deleteUser({{ user.id }})" class="btn-danger">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<script src="/static/sandbox.js"></script>
+</body>
+</html>
